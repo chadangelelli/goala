@@ -6,7 +6,6 @@
     [integrant.core :as ig]
     [taoensso.timbre :as log]
     [xtdb.api :as xtdb]
-    [xtdb.rocksdb]
     [aleph.http :as aleph]
     )
   (:gen-class))
@@ -65,7 +64,7 @@
 (defn start-app 
   []
   (reset! config (ig/read-string (slurp "config.edn")))
-  (reset! system (ig/init config))
+  (reset! system (ig/init @config))
   :started)
 
 (defn stop-app
@@ -76,4 +75,5 @@
 (defn restart-app
   []
   (stop-app)
-  (start-app))
+  (start-app)
+  :restarted)
