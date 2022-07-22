@@ -59,19 +59,12 @@
 
 ;; __________________________________________________________________ SYSTEM
 
-(def config 
-  {:http/handler {}
-   :http/server {:port 8000 :handler (ig/ref :http/handler)}
-   
-   :db/node 
-   {:xtdb/tx-log         (rocksdb-kv-store "__data/tx-log")
-    :xtdb/document-store (rocksdb-kv-store "__data/doc-store")
-    :xtdb/index-store    (rocksdb-kv-store "__data/index-store")} })
-
+(def config (atom nil))
 (def system (atom nil))
 
 (defn start-app 
   []
+  (reset! config (ig/read-string (slurp "config.edn")))
   (reset! system (ig/init config))
   :started)
 
@@ -79,3 +72,8 @@
   []
   (reset! system (ig/halt! @system))
   :stopped)
+
+(defn restart-app
+  []
+  (stop-app)
+  (start-app))

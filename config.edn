@@ -1,0 +1,8 @@
+{
+ :http/handler {}
+ :http/server {:port 3000 :handler #ig/ref :http/handler}
+
+ :db/node
+ {:xtdb/tx-log         (rocksdb-kv-store "__data/tx-log")
+  :xtdb/document-store (rocksdb-kv-store "__data/doc-store")
+  :xtdb/index-store    (rocksdb-kv-store "__data/index-store")} }
