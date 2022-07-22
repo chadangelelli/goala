@@ -1,62 +1,18 @@
 (ns goala.core
   (:require
-    [clojure.java.io :as io]
-    [clojure.pprint :refer (pprint)]
-
     [integrant.core :as ig]
-    [taoensso.timbre :as log]
-    [xtdb.api :as xtdb]
-    [aleph.http :as aleph]
-    )
-  (:gen-class))
+    [goala.db :as db]
+    [goala.http :as http]))
 
-;; __________________________________________________________________ DB
-(defn rocksdb-kv-store
-  [dir]
-  {:kv-store {:xtdb/module 'xtdb.rocksdb/->kv-store
-              :db-dir (io/file dir)
-              :sync? true}})
-
-(defmethod ig/init-key :db/node [_ config]
-  (log/info (str "[GOALA] => Starting DB node" ))
-  (xtdb/start-node config))
-
-(defmethod ig/halt-key! :db/node [_ node]
-  (log/info (str "[GOALA] => Stopping DB node" ))
-  (.close node))
-
-;; __________________________________________________________________ HTTP
-
-(defmethod ig/init-key :http/server [_ opts]
-  (let [handler (atom (delay (:handler opts)))
-        options (dissoc opts :handler)]
-    (log/info (str "[GOALA] => Starting HTTP server on port " (:port options)))
-    {:handler handler
-     :server  (aleph/start-server (fn [req] (@@handler req)) options)}))
-
-(defmethod ig/halt-key! :http/server [_ {:keys [server]}]
-  (log/info (str "[GOALA] => Stopping HTTP server"))
-  (.close ^java.io.Closeable server))
-
-(defmethod ig/suspend-key! :http/server [_ {:keys [handler]}]
-  (log/info (str "[GOALA] => Suspending HTTP server"))
-  (reset! handler (promise)))
+(defmethod ig/init-key     :db/node      [_ cnf]  (db/start cnf))
+(defmethod ig/halt-key!    :db/node      [_ node] (db/stop node))
+(defmethod ig/init-key     :http/server  [_ opts] (http/start opts))
+(defmethod ig/halt-key!    :http/server  [_ cnf]  (http/stop cnf))
+(defmethod ig/suspend-key! :http/server  [_ cnf]  (http/suspend cnf))
+(defmethod ig/init-key     :http/handler [_ _]    http/handler)
 
 (defmethod ig/resume-key :http/server [k opts old-opts old-impl]
-  (log/info (str "[GOALA] => Resuming HTTP server on port " (:port opts)))
-  (if (= (dissoc opts :handler) (dissoc old-opts :handler))
-    (do (deliver @(:handler old-impl) (:handler opts))
-        old-impl)
-    (do (ig/halt-key! k old-impl)
-        (ig/init-key k opts))))
-
-(defmethod ig/init-key :http/handler [_ _]
-  (fn
-    [req]
-    {:status 200
-     :body (with-out-str (pprint req))}))
-
-;; __________________________________________________________________ SYSTEM
+  (http/resume k opts old-opts old-impl))
 
 (def config (atom nil))
 (def system (atom nil))
