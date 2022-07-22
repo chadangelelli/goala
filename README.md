@@ -1,2 +1,2 @@
-# goala
+# Goala
 Goala
