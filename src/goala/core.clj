@@ -6,7 +6,7 @@
 
 (defmethod ig/init-key     :db/node      [_ cnf]  (db/start cnf))
 (defmethod ig/halt-key!    :db/node      [_ node] (db/stop node))
-(defmethod ig/init-key     :http/server  [_ opts] (http/start opts))
+(defmethod ig/init-key     :http/server  [_ cnf]  (http/start cnf))
 (defmethod ig/halt-key!    :http/server  [_ cnf]  (http/stop cnf))
 (defmethod ig/suspend-key! :http/server  [_ cnf]  (http/suspend cnf))
 (defmethod ig/init-key     :http/handler [_ _]    http/handler)
