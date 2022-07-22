@@ -38,3 +38,4 @@ __data
 .rebel_readline_history
 *.crt
 *.key
+*.dylib
