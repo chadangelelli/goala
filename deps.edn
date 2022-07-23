@@ -1,35 +1,50 @@
-{:paths ["src"]
- :deps
- {;; ...................................................... system
-  org.clojure/clojure       {:mvn/version "1.10.3"}
-  org.clojure/clojurescript {:mvn/version "1.10.866"}
-  integrant/integrant       {:mvn/version "0.8.0"}
-  com.taoensso/timbre       {:mvn/version "5.1.2"}
-  com.fzakaria/slf4j-timbre {:mvn/version "0.3.21"}
+{:name "Goala"
+ :description "Monetary goals"
+ :version "0.1.1"
+ :author "Chad Angelelli"
+ :url "https://github.com/chadangelelli/goala"
+ 
+ :paths ["src" "resources"]
+ 
+ :deps {org.clojure/clojure        {:mvn/version "1.10.3"}
+        org.clojure/clojurescript  {:mvn/version "1.10.866"}
 
-  ;; ...................................................... validation
-  metosin/malli             {:mvn/version "0.5.1"}
-
-  ;; ...................................................... db
-  com.xtdb/xtdb-core        {:mvn/version "1.21.0"}
-  com.xtdb/xtdb-rocksdb     {:mvn/version "1.21.0"}
-
-  ;; ...................................................... web
-  aleph/aleph               {:mvn/version "0.5.0"}
-  metosin/reitit            {:mvn/version "0.5.18"}
-  hiccup/hiccup             {:mvn/version "1.0.5"}}
+        aleph/aleph                {:mvn/version "0.5.0"}
+        buddy/buddy-auth           {:mvn/version "3.0.323"}
+        buddy/buddy-hashers        {:mvn/version "1.8.158"}
+        buddy/buddy-sign           {:mvn/version "3.4.333"}
+        com.taoensso/timbre        {:mvn/version "5.1.2"}
+        com.fzakaria/slf4j-timbre  {:mvn/version "0.3.21"}
+        com.xtdb/xtdb-core         {:mvn/version "1.21.0"}
+        com.xtdb/xtdb-rocksdb      {:mvn/version "1.21.0"}
+        hiccup/hiccup              {:mvn/version "1.0.5"}
+        integrant/integrant        {:mvn/version "0.8.0"}
+        metosin/malli              {:mvn/version "0.5.1"}
+        metosin/reitit             {:mvn/version "0.5.18"}}
 
  :aliases
- {:repl {:extra-deps {com.bhauman/rebel-readline {:mvn/version "0.1.4"}}
-         :main-opts  ["-m" "rebel-readline.main"]}
-  
-  :test {:extra-paths ["test"]
-         :extra-deps {io.github.cognitect-labs/test-runner 
-                      {:git/tag "v0.5.0" :git/sha "b3fd0d2"}}
-         :main-opts ["-m" "cognitect.test-runner"]
-         :exec-fn cognitect.test-runner.api/test}
+ {:repl
+  {:main-opts  ["-m" "rebel-readline.main"]
+   :extra-deps {com.bhauman/rebel-readline {:mvn/version "0.1.4"}}}
 
-  :test-refresh {:extra-paths ["test"]
-                 :extra-deps {com.jakemccrary/test-refresh
-                              {:mvn/version "0.25.0-SNAPSHOT"}}
-                 :main-opts ["-m" "com.jakemccrary.test-refresh"]}}}
+  :cljs
+  {:main-opts ["-m" "shadow.cljs.devtools.cli"]
+   :extra-deps {cljsjs/react               {:mvn/version "17.0.2-0"}
+                cljsjs/react-dom           {:mvn/version "17.0.2-0"}
+                day8.re-frame/re-frame-10x {:mvn/version "1.4.1"}
+                reagent/reagent            {:mvn/version "1.1.1"}
+                re-frame/re-frame          {:mvn/version "1.3.0-rc3"}
+                thheller/shadow-cljs       {:mvn/version "2.19.6"}}}
+
+  :test
+  {:exec-fn cognitect.test-runner.api/test
+   :main-opts ["-m" "cognitect.test-runner"]
+   :extra-paths ["test"]
+   :extra-deps {io.github.cognitect-labs/test-runner 
+                {:git/tag "v0.5.0" :git/sha "b3fd0d2"}}}
+
+  :test-refresh 
+  {:main-opts ["-m" "com.jakemccrary.test-refresh"]
+   :extra-paths ["test"]
+   :extra-deps {com.jakemccrary/test-refresh
+                {:mvn/version "0.25.0-SNAPSHOT"}}}}}
